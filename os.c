@@ -1,81 +1,128 @@
-#include<iostream>
-using namespace std;
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
 
+bool student_finish=false;
+bool faculty_finish=false;
+int burst2 = 0;
+int i=0;
+int wait_time_faculty( int burst_faculty[], int rburst_faculty[], int f1, int wait_faculty[], int quant_data, int quantum, int t )
+  { int ft=0;int count=0;
 
-int wait_time_faculty( int burst_faculty[], int rburst_faculty[], int f1, int wait_faculty[], int quant_data, int quantum, int t)
-  { int ft=0;int count=0,burst=0;
-  cout<<"inside wait_time_faculty"<<endl;
-  for (int i = 0 ; i < f1; i++)
+  bool done = false;
+  
+  for (i = 0 ; i < f1; i++)
   count += burst_faculty[i];
-    while(count < burst)
-    {
-    	cout<<"Inside secind while"<<endl;
 
-    for (int i = 0 ; i < f1; i++)
+  
+    while(ft < quantum && faculty_finish == false)
+    {
+
+
+    for (i = 0 ; i < f1; i++)
     {
   
       if (rburst_faculty[i] > 0)
       {      
 
         if (rburst_faculty[i] >= quant_data)
-        {cout<<"rburst_faculty[i] >= quant_data"<<endl;
+        {
           // adding burst to total time may or mat not exceed the queue burst 
           //check if adding exceeds queue burst
-		cout<<"ft = "<<ft<<endl;
+    
           if((ft + quant_data) >= quantum)
-		  {cout<<"ft + quant_data"<<endl;
-            if((ft + quant_data) == quantum){
+     		 {
+			  
+     		 if((ft + quant_data) > quantum){
+     		 	
               ft += quant_data;
-              burst += quant_data;
-              cout<<"ft = "<<ft<<endl;
-              t += quant_data;
-              cout<<"ft = "<<ft<<endl;
-              rburst_faculty[i]-=quant_data;  
-			  ft=0;            
-            }
-
-            if((ft + quant_data) > quantum){
-            	cout<<"ft = "<<ft<<endl;
-              ft += quant_data;
-              burst += quant_data;
-			  int z= quantum - ft;
+              burst2 += quant_data;
+              
+              
+        		int z= quantum - ft;
               rburst_faculty[i] -= z;
-              cout<<"ft = "<<ft<<endl;
+              
               t += t + z;
-              ft=0;
+              if(rburst_faculty[i] == 0){
+              	
+              	wait_faculty[i] = t - burst_faculty[i];
+              	
+			  }
+              if(count==burst2){
+    		faculty_finish == true;
+			}
+				}
+              
+            if((ft + quant_data) == quantum){
+            	
+              ft += quant_data;
+              t += quant_data;
+              burst2 += quant_data;
+              
+              if(rburst_faculty[i] == 0){
+              	
+              	wait_faculty[i] = t - burst_faculty[i];
+              	
+			  }
+              
+              
+              rburst_faculty[i]-=quant_data;
+			if(count==burst2){
+   				faculty_finish == true;
+			}
             }
 
-          }
+            
+            }
           else{
             rburst_faculty[i] -= quant_data;
             ft += quant_data;
-            burst += quant_data;
-            t += quant_data;      
-			cout<<"ft = "<<ft<<endl;     
+            t += quant_data; 
+            burst2 += quant_data;
+            if(rburst_faculty[i] == 0){
+              	
+              	wait_faculty[i] = t - burst_faculty[i];
+              	
+			  }
+  
+	  if(count==burst2){
+    		faculty_finish == true;
+			}   
           }
-      }
+          
+  		}
         else{
 
           t = t + rburst_faculty[i];
-          burst += rburst_faculty[i];
+          burst2 += rburst_faculty[i];          
           ft += rburst_faculty[i];
-			cout<<"t = t + rburst_faculty[i]"<<endl;
-			cout<<"ft = "<<ft<<endl;
-
           wait_faculty[i] = t - burst_faculty[i];
-
-
+          if(count==burst2){
+				
+    		faculty_finish == true;
+    		done = true;
+			}
           rburst_faculty[i] = 0;
             }
         }
       
     }
-    if(count>25)
-    break;
-    
-  }
-  return t;
+    if(ft>=quantum && student_finish == true){
+	
+    ft = 0;
 }
+    if(count==burst2){
+    	
+    	faculty_finish == true;
+	}
+	if(done = true){
+	
+	break;
+}
+}return t;
+
+  }
+  
 
 
 
@@ -83,38 +130,30 @@ void waiting( int s1,int f1, int burst_student[],int burst_faculty[],
                  int quant_data, int wait_student[],int wait_faculty[], int quantum)
 {
   
-  cout<<"Inside findwaiting time"<<endl;
-  int c=0;
   int rburst_student[s1];
   int rburst_faculty[f1];
   int burst_f[f1];
 
 int count=0,burst=0;
-  for (int i = 0 ; i < f1; i++)
+  for (i = 0 ; i < f1; i++){
+  
   count += burst_student[i];
-  
-  for (int i = 0 ; i < s1 ; i++){
-  
-    rburst_student[i] = burst_student[i];
-    count += burst_student[i];}
-  for (int i = 0 ; i < f1 ; i++)
-    rburst_faculty[i] = burst_faculty[i];
-	for (int i = 0 ; i < f1 ; i++)
-    burst_f[i] = burst_faculty[i];
-    
-    for (int i = 0 ; i < f1 ; i++)
-    wait_faculty[i] = 0;
+  rburst_student[i] = burst_student[i];
+  rburst_faculty[i] = burst_faculty[i];
+  burst_f[i] = burst_faculty[i];
+  wait_faculty[i] = 0;}
+
 
   int t = 0;
   int st=0;
   // round robin 
 
-  while (1)
+  while (1 && student_finish == false)
   {
-  	cout<<"Insside while"<<endl;
+   
     bool done = true;
 
-    for (int i = 0 ; i < s1; i++)
+    for (i = 0 ; i < s1; i++)
     {
 
       if (rburst_student[i] > 0)
@@ -122,52 +161,105 @@ int count=0,burst=0;
         done = false; 
 
         if (rburst_student[i] >= quant_data)
-        {cout<<"rburst_student[i] >= quant_data"<<endl;
+        {
 
           // adding burst to total time may or mat not exceed the queue burst 
           //check if adding exceeds queue burst
           if((st + quant_data >= quantum))
-		  {
+      {		
             if((st + quant_data) == quantum)
-			{
+      {		
               st += quant_data;
               t += quant_data;
+              burst += quant_data;
+              
               rburst_student[i] -= quant_data;
-              c = wait_time_faculty(burst_f,rburst_faculty,f1, wait_faculty, quant_data, quantum, t);
-              t = t + c;
+              if(rburst_student[i] == 0){
+              	
+              	wait_student[i] = t - burst_student[i];
+			  }
+              t = wait_time_faculty(burst_f,rburst_faculty,f1, wait_faculty, quant_data, quantum, t);
+              if(count==burst){
+      			student_finish=true;
+				  		
+              if(faculty_finish==false){
+			  
+			  t = wait_time_faculty(burst_f,rburst_faculty,f1, wait_faculty, quant_data, quantum, t);
+				} 
+				else{
+					
+				}}
+				
+			  
               st = 0;
               
             }
             if((st + quant_data) > quantum){
+            	
               st += quant_data;
               int z = quantum - st;
+              burst += quant_data;
+              
+              
+              
               rburst_student[i] -= z;
               t += z;
-              c = wait_time_faculty(burst_f,rburst_faculty,f1, wait_faculty, quant_data, quantum, t);
-              t = t + c;
+              t = wait_time_faculty(burst_f,rburst_faculty,f1, wait_faculty, quant_data, quantum, t);
+              if(count==burst){
+      			student_finish=true;	  			
+              if(faculty_finish==false){				  		  
+			  t = wait_time_faculty(burst_f,rburst_faculty,f1, wait_faculty, quant_data, quantum, t);
+				} 
+				}
               st = 0;
             }
             
           }
+          
 
           else{
             rburst_student[i] -= quant_data;
             st += quant_data;
-            t += quant_data;           
+            burst += quant_data;
+            
+            if(rburst_student[i] == 0){
+              	
+              	wait_student[i] = t - burst_student[i];
+			  }
+            
+             t += quant_data;
+            if(count==burst){
+      			student_finish=true;	  			
+              
+			if(faculty_finish==false){					  
+			  t = wait_time_faculty(burst_f,rburst_faculty,f1, wait_faculty, quant_data, quantum, t);
+				}
+				   }    
           }
       }
           //burst time is smaller than or equal to quan_data
             else{
           t = t + rburst_student[i];
           st += rburst_student[i];
-              
+          burst += rburst_student[i];
+          
           wait_student[i] = t - burst_student[i];
-
+          
           rburst_student[i] = 0;
+          if(count==burst){
+      			student_finish=true;  
+				       
+          if(faculty_finish==false){		  	  
+			  t = wait_time_faculty(burst_f,rburst_faculty,f1, wait_faculty, quant_data, quantum, t);
+				}
+			}
             }
         }
         
       }
+      if(count==burst){
+      	student_finish=true;
+	  }
       if (done == true)
       break;
     }
@@ -178,15 +270,15 @@ void turn_around(int s1,int f1,int burst_student[],
                         int burst_faculty[],int wait_student[],int wait_faculty[],int turn_student[],int turn_faculty[])
 {
  
-  for (int i = 0; i < s1 ; i++)
+  for (i = 0; i < s1 ; i++)
     turn_student[i] = burst_student[i] + wait_student[i];
 
-  for (int i = 0; i < f1 ; i++)
+  for (i = 0; i < f1 ; i++)
     turn_faculty[i] = burst_faculty[i] + wait_faculty[i];
 }
 
 
-void average(int student[],int faculty[], int s1,int f1, int burst_student[],int burst_faculty[],
+void average(int s1,int f1, int burst_student[],int burst_faculty[],
                  int quant_data,int quantum)
 {
   int wait_student[s1], wait_faculty[f1],turn_student[s1], turn_faculty[f1] ;
@@ -195,54 +287,80 @@ void average(int student[],int faculty[], int s1,int f1, int burst_student[],int
   waiting(s1,f1, burst_student,burst_faculty,quant_data,wait_student,wait_faculty, quantum);
   turn_around( s1,f1, burst_student,burst_faculty,wait_student,wait_faculty, turn_student, turn_faculty);
 
- 
-  cout << "Processes "<< " Burst time "
-    << " Waiting time " << " Turn around time\n";
+  printf("\t\t\tProcessing details for Students\n");
+  printf("\n\n\n\t\t\tProcesses \t Burst-time \t Waiting time \t Turn around time\n\n");
 
   // total waiting time and total turn around time
-  for (int i=0; i<s1; i++)
+  
+  for (i=0; i<s1; i++)
   {
     total_wait_student = total_wait_student + wait_student[i];
     total_turn_student = total_turn_student + turn_student[i];
-    cout << " " << i+1 << "\t\t" << burst_student[i] <<"\t "
-      << wait_student[i] <<"\t\t " << turn_student[i] <<endl;
+    printf("\t\t\t ", i+1," \t "); printf(burst_student[i]);printf(" \t ", wait_student[i]);printf("  \t  ", turn_student[i],"\n");
   }
+  printf("\n");
+  printf("\t\t\tAverage waiting time = ", ((float)total_wait_student / (float)s1),"\n");
+  printf("\t\t\tAverage turn around time = ", ((float)total_turn_student / (float)s1), "\n");
+  
+  printf("\n\n\n\t\t\tProcesses \t Burst-time \t Waiting time \t Turn around time\n\n");
 
-  cout << "Average waiting time = "
-    << (float)total_wait_student / (float)s1;
-  cout << "\nAverage turn around time = "
-    << (float)total_turn_student / (float)s1;
-    int j=0;
-
-  for (int i=faculty[j]; i < f1; i++)
+printf("\t\t\tProcessing details for Faculties\n");
+  for (i=0; i < f1; i++)
   {
     total_wait_faculty = total_wait_faculty + wait_faculty[i];
     total_turn_faculty = total_turn_faculty + turn_faculty[i];
-    cout << " " << i << "\t\t" << burst_faculty[i] <<"\t "
-      << wait_faculty[i] <<"\t\t " << turn_student[i] <<endl;
-      j++;
+    printf("\t\t\t ", i+1," \t "); printf(burst_faculty[i]);	printf(" \t ",  wait_faculty[i]); printf("  \t  ",  turn_faculty[i] ,"\n");      
   }
 
-  cout << "Average waiting time = "
-    << (float)total_wait_faculty / (float)f1;
-  cout << "\nAverage turn around time = "
-    << (float)total_turn_faculty / (float)f1;
+  printf("\n");
+  printf("\t\t\tAverage waiting time = ", ((float)total_wait_faculty / (float)f1),"\n");
+  printf("\t\t\tAverage turn around time = ", ((float)total_turn_faculty / (float)f1), "\n");
 
 }
 
 int main()
 {
-  int student[] = { 1, 2, 3};
-  int s1 = sizeof student / sizeof student[0];
-  int faculty[] = { 4,5,6};
-  int f1 = sizeof faculty / sizeof faculty[0];
-
-  int burst_student[] = {10, 5, 8};
-  int burst_faculty[] = {8,5,6};
+ 
+  
+  printf(" ***************************************Program to handle student and faculty queries***************************************\n");
+  printf("\t\t\t\t\tEnter number of students and faculties \n");
+  
+  int n1,n2;
+  scanf("%d\n",&n1);
+  scanf("%d\n",&n2);
+  
+  int burst_student[n1];
+  int burst_faculty[n2];
+  printf("\t\t\t\t\tYou have only 2 hours or 7200 seconds to complete all queries \n");
+  printf("\t\t\t\t\tEnter values accordingly \n\n");
+  printf("\t\t\t\t\tEnter burst times in seconds for student queries\n\n");
+  
+  for(i=0;i<n1;i++)
+  scanf("\t\t\t\t\t%d\n",&burst_student[i]);
+  
+  printf("\t\t\t\t\tEnter burst times in seconds for faculty queries\n\n");
+  
+  for(i=0;i<n2;i++)
+  scanf("\t\t\t\t\t%d\n",&burst_faculty[i]);
+  
+  
   int quant_data=4;
 
   // Time quantum
   int quantum = 12;
-  average(student,faculty, s1,f1, burst_student,burst_faculty,quant_data, quantum);
+  printf("\t\t\t\t\tEnter burst times for student queries\n\n");
+  int sum=0;
+  
+  for(i=0;i<n1;i++)
+  sum += burst_student[i];
+  
+  for(i=0;i<n2;i++)
+  sum += burst_faculty[i];
+  if(sum > 7200){
+  	printf("\t\t\t\t\tCannot process your request, burst times are too high\n\n");
+  }
+  else
+  average(n1,n2, burst_student,burst_faculty,quant_data, quantum);
+  
   return 0;
 }
