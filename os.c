@@ -287,8 +287,8 @@ void average(int s1,int f1, int burst_student[],int burst_faculty[],
   waiting(s1,f1, burst_student,burst_faculty,quant_data,wait_student,wait_faculty, quantum);
   turn_around( s1,f1, burst_student,burst_faculty,wait_student,wait_faculty, turn_student, turn_faculty);
 
-  printf("\t\t\tProcessing details for Students\n");
-  printf("\n\n\n\t\t\tProcesses \t Burst-time \t Waiting time \t Turn around time\n\n");
+  printf("Processing details for Students\n");
+  printf("\n\n\n  Processes \t Burst-time \t Waiting time \t Turn around time\n\n");
 
   // total waiting time and total turn around time
   
@@ -296,25 +296,30 @@ void average(int s1,int f1, int burst_student[],int burst_faculty[],
   {
     total_wait_student = total_wait_student + wait_student[i];
     total_turn_student = total_turn_student + turn_student[i];
-    printf("\t\t\t ", i+1," \t "); printf(burst_student[i]);printf(" \t ", wait_student[i]);printf("  \t  ", turn_student[i],"\n");
+    printf("\t%d \t ",i+1); printf("\t%d \t ",burst_student[i]);printf("\t%d \t ",wait_student[i]);printf("\t%d",turn_student[i]);
+    printf("\n");
   }
   printf("\n");
-  printf("\t\t\tAverage waiting time = ", ((float)total_wait_student / (float)s1),"\n");
-  printf("\t\t\tAverage turn around time = ", ((float)total_turn_student / (float)s1), "\n");
-  
-  printf("\n\n\n\t\t\tProcesses \t Burst-time \t Waiting time \t Turn around time\n\n");
+  printf("Average waiting time = %f\n", ((float)total_wait_student / (float)s1));
+  printf("Average turn around time = %f\n", ((float)total_turn_student / (float)s1));
+  printf("\n");
+  printf("\n");
+  printf("Processing details for Faculties\n");
 
-printf("\t\t\tProcessing details for Faculties\n");
+  printf("\n\n\n  Processes \t Burst-time \t Waiting time \t Turn around time\n\n");
+
+	printf("\n");
   for (i=0; i < f1; i++)
   {
     total_wait_faculty = total_wait_faculty + wait_faculty[i];
     total_turn_faculty = total_turn_faculty + turn_faculty[i];
-    printf("\t\t\t ", i+1," \t "); printf(burst_faculty[i]);	printf(" \t ",  wait_faculty[i]); printf("  \t  ",  turn_faculty[i] ,"\n");      
+    printf("\t%d \t ",i+1); printf("\t%d \t ",burst_faculty[i]);	printf("\t%d \t ",wait_faculty[i]); printf("\t%d \t ",turn_faculty[i]);
+	printf("\n");      
   }
 
   printf("\n");
-  printf("\t\t\tAverage waiting time = ", ((float)total_wait_faculty / (float)f1),"\n");
-  printf("\t\t\tAverage turn around time = ", ((float)total_turn_faculty / (float)f1), "\n");
+  printf("Average waiting time = %f\n", ((float)total_wait_faculty / (float)f1),"\n");
+  printf("Average turn around time = %f\n", ((float)total_turn_faculty / (float)f1), "\n");
 
 }
 
@@ -322,33 +327,33 @@ int main()
 {
  
   
-  printf(" ***************************************Program to handle student and faculty queries***************************************\n");
-  printf("\t\t\t\t\tEnter number of students and faculties \n");
+  printf("Program to handle student and faculty queries\n");
+  printf("Enter number of students and faculties \n");
   
   int n1,n2;
-  scanf("%d\n",&n1);
-  scanf("%d\n",&n2);
+  scanf("%d",&n1);
+scanf("%d",&n2);
   
   int burst_student[n1];
   int burst_faculty[n2];
-  printf("\t\t\t\t\tYou have only 2 hours or 7200 seconds to complete all queries \n");
-  printf("\t\t\t\t\tEnter values accordingly \n\n");
-  printf("\t\t\t\t\tEnter burst times in seconds for student queries\n\n");
+  printf("You have only 2 hours or 7200 seconds to complete all queries \n");
+  printf("Enter values accordingly \n\n");
+  printf("Enter burst times in seconds for student queries\n\n");
   
   for(i=0;i<n1;i++)
-  scanf("\t\t\t\t\t%d\n",&burst_student[i]);
+  scanf("%d",&burst_student[i]);
   
-  printf("\t\t\t\t\tEnter burst times in seconds for faculty queries\n\n");
+  printf("Enter burst times in seconds for faculty queries\n\n");
   
   for(i=0;i<n2;i++)
-  scanf("\t\t\t\t\t%d\n",&burst_faculty[i]);
+  scanf("%d",&burst_faculty[i]);
   
   
   int quant_data=4;
 
   // Time quantum
   int quantum = 12;
-  printf("\t\t\t\t\tEnter burst times for student queries\n\n");
+  printf("Enter burst times for student queries\n\n");
   int sum=0;
   
   for(i=0;i<n1;i++)
@@ -357,7 +362,7 @@ int main()
   for(i=0;i<n2;i++)
   sum += burst_faculty[i];
   if(sum > 7200){
-  	printf("\t\t\t\t\tCannot process your request, burst times are too high\n\n");
+  	printf("Cannot process your request, burst times are too high\n\n");
   }
   else
   average(n1,n2, burst_student,burst_faculty,quant_data, quantum);
